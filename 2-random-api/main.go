@@ -24,7 +24,7 @@ func main() {
 }
 
 func random(w http.ResponseWriter, r *http.Request) {
-	randomValue := rand.IntN(5) + 1
+	randomValue := rand.IntN(6) + 1
 	fmt.Println("Random:", randomValue)
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
