@@ -4,7 +4,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func ConfigureLogrus(logConfig *LogConfig) error {
+func ConfigureLogrus(logConfig *LogConfig) {
 	switch logConfig.Level {
 	case "debug":
 		logrus.SetLevel(logrus.DebugLevel)
@@ -26,6 +26,4 @@ func ConfigureLogrus(logConfig *LogConfig) error {
 	default:
 		logrus.SetFormatter(&logrus.JSONFormatter{})
 	}
-
-	return nil
 }
