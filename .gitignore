@@ -3,3 +3,4 @@
 ./4-order-api/.env.Development
 *.xml
 *.iml
+/4-order-api/logs/orderapi.log

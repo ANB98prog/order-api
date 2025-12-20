@@ -1,9 +1,8 @@
 package configs
 
 import (
-	"github.com/joho/godotenv"
+	"github.com/spf13/viper"
 	"log"
-	"os"
 )
 
 type Config struct {
@@ -14,13 +13,19 @@ type DbConfig struct {
 	Dsn string
 }
 
-func LoadConfig() *Config {
-	err := godotenv.Load("./4-order-api/.env.Development")
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
+func ReadEnvironmentVariables() {
+	viper.SetConfigName(".env")
+	viper.SetConfigType("dotenv")
+	viper.AddConfigPath("./4-order-api")
 
+	err := viper.ReadInConfig()
+	if err != nil {
+		log.Fatalf("Fatal error config env file: %s \n", err)
+	}
+}
+
+func LoadConfig() *Config {
 	return &Config{
-		Db: DbConfig{Dsn: os.Getenv("DSN")},
+		Db: DbConfig{Dsn: viper.GetString("DSN")},
 	}
 }
