@@ -6,26 +6,6 @@ import (
 	"os"
 )
 
-//func ReadFile[T any](filePath string) (T, error) {
-//	file, err := os.OpenFile(filePath, os.O_CREATE, os.ModePerm)
-//	if err != nil {
-//		return *new(T), err
-//	}
-//	defer file.Close()
-//
-//	fileData, err := json.Decode[T](file)
-//	if err != nil {
-//		return *new(T), fmt.Errorf("file %s is not a valid JSON file. Error: %e", filePath, err)
-//	}
-//
-//	err = json.IsValid(fileData)
-//	if err != nil {
-//		return *new(T), fmt.Errorf("file %s is not a valid JSON file. Error: %e", filePath, err)
-//	}
-//
-//	return fileData, nil
-//}
-
 func ReadFile[T any](filePath string) (*T, error) {
 	data, err := os.ReadFile(filePath)
 	if err != nil {
