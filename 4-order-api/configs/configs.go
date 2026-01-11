@@ -6,11 +6,16 @@ import (
 )
 
 type Config struct {
-	Db DbConfig
+	Db   DbConfig
+	Auth AuthConfig
 }
 
 type DbConfig struct {
 	Dsn string
+}
+
+type AuthConfig struct {
+	Secret string
 }
 
 func ReadEnvironmentVariables() {
@@ -26,6 +31,7 @@ func ReadEnvironmentVariables() {
 
 func LoadConfig() *Config {
 	return &Config{
-		Db: DbConfig{Dsn: viper.GetString("DSN")},
+		Db:   DbConfig{Dsn: viper.GetString("DSN")},
+		Auth: AuthConfig{Secret: viper.GetString("AUTH_SECRET")},
 	}
 }
