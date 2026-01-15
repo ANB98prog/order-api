@@ -40,7 +40,7 @@ func (handler AuthHandler) sendAuthCode() http.HandlerFunc {
 		// Логируем сгенерированный токен сессии и код авторизации
 		log.Printf("SessionId: %v Code: %v Phone: %s", authCode.SessionId, authCode.Code, payload.Phone)
 
-		response.OK(w, AuthCodeResponse{SessionId: authCode.SessionId})
+		response.OKWithData(w, AuthCodeResponse{SessionId: authCode.SessionId})
 	}
 }
 
@@ -63,6 +63,6 @@ func (handler AuthHandler) verifyAuthCode() http.HandlerFunc {
 			return
 		}
 
-		response.OK(w, AuthCodeVerifyResponse{Token: token})
+		response.OKWithData(w, AuthCodeVerifyResponse{Token: token})
 	}
 }

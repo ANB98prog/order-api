@@ -23,12 +23,12 @@ const (
 func Authorization(next http.Handler, config *configs.Config) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		authorizationHeader := r.Header.Get("Authorization")
-		if !strings.HasPrefix(bearerPrefix, authorizationHeader) {
+		if !strings.HasPrefix(authorizationHeader, bearerPrefix) {
 			response.Unauthorized(w, response.ErrorMessage{Message: ErrInvalidAuthorizationMethod})
 			return
 		}
 
-		bearerToken := strings.TrimPrefix("Bearer ", authorizationHeader)
+		bearerToken := strings.TrimPrefix(authorizationHeader, bearerPrefix)
 		data, isValid := jwt.NewJWT(config.Auth.Secret).Parse(bearerToken)
 		if !isValid {
 			response.Unauthorized(w, response.ErrorMessage{Message: ErrInvalidAuthorizationToken})

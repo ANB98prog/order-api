@@ -17,9 +17,9 @@ func jsonErrorResponse[T any](w http.ResponseWriter, data T, status int) {
 	http.Error(w, string(message), status)
 }
 
-func OK[T any](w http.ResponseWriter, data T)       { jsonResponse(w, data, http.StatusOK) }
-func Created[T any](w http.ResponseWriter, data T)  { jsonResponse(w, data, http.StatusCreated) }
-func NotFound[T any](w http.ResponseWriter, data T) { jsonErrorResponse(w, data, http.StatusNotFound) }
+func OKWithData[T any](w http.ResponseWriter, data T) { jsonResponse(w, data, http.StatusOK) }
+func Created[T any](w http.ResponseWriter, data T)    { jsonResponse(w, data, http.StatusCreated) }
+func NotFound[T any](w http.ResponseWriter, data T)   { jsonErrorResponse(w, data, http.StatusNotFound) }
 func BadRequest[T any](w http.ResponseWriter, data T) {
 	jsonErrorResponse(w, data, http.StatusBadRequest)
 }

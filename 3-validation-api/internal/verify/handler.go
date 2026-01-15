@@ -2,7 +2,6 @@ package verify
 
 import (
 	"errors"
-	"github.com/ANB98prog/purple-school-homeworks/3-validation-api/configs"
 	"github.com/ANB98prog/purple-school-homeworks/3-validation-api/pkg/request"
 	"github.com/ANB98prog/purple-school-homeworks/3-validation-api/pkg/response"
 	"net/http"
@@ -41,7 +40,7 @@ func (handler *VerifyHandler) Send() http.HandlerFunc {
 			return
 		}
 
-		response.OK(w, map[string]any{})
+		response.OKWithData(w, map[string]any{})
 		return
 	}
 }
@@ -55,7 +54,7 @@ func (handler *VerifyHandler) Verify() http.HandlerFunc {
 		}
 
 		if isVerified := handler.verificationService.Verify(hash); isVerified {
-			response.OK(w, map[string]any{})
+			response.OKWithData(w, map[string]any{})
 			return
 		}
 

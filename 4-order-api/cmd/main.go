@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/ANB98prog/purple-school-homeworks/4-order-api/configs"
 	"github.com/ANB98prog/purple-school-homeworks/4-order-api/internal/auth"
+	"github.com/ANB98prog/purple-school-homeworks/4-order-api/internal/product"
 	"github.com/ANB98prog/purple-school-homeworks/4-order-api/pkg/jwt"
 	"github.com/ANB98prog/purple-school-homeworks/4-order-api/pkg/logging"
 	"github.com/ANB98prog/purple-school-homeworks/4-order-api/pkg/middlewares"
@@ -30,6 +31,7 @@ func main() {
 
 	// Handlers
 	auth.NewAuthHandler(router, authService, j)
+	product.NewProductHandler(router, conf)
 
 	stack := middlewares.Chain(middlewares.Logging)
 
