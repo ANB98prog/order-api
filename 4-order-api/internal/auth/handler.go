@@ -31,13 +31,11 @@ func (handler AuthHandler) sendAuthCode() http.HandlerFunc {
 			return
 		}
 
-		authCode, err := handler.authService.GenerateAuthCode()
+		authCode, err := handler.authService.GenerateAuthCode(payload.Phone)
 		if err != nil {
 			response.InternalServerError(w, response.ErrorMessage{Message: err.Error()})
 			return
 		}
-
-		// Номер телефона нужен только для отправки кода
 
 		// Логируем сгенерированный токен сессии и код авторизации
 		log.Printf("SessionId: %v Code: %v Phone: %s", authCode.SessionId, authCode.Code, payload.Phone)
@@ -53,13 +51,13 @@ func (handler AuthHandler) verifyAuthCode() http.HandlerFunc {
 			return
 		}
 
-		isValid := handler.authService.VerifyAuthCode(payload.SessionId, payload.Code)
-		if !isValid {
-			response.BadRequest(w, response.ErrorMessage{Message: fmt.Errorf("invalid auth code").Error()})
+		authCode, ok := handler.authService.GetAuthCode(payload.SessionId)
+		if !ok || authCode.Code != payload.Code {
+			response.Unauthorized(w, response.ErrorMessage{Message: fmt.Errorf("invalid auth code").Error()})
 			return
 		}
 
-		token, err := handler.jwt.Create(payload.SessionId)
+		token, err := handler.jwt.Create(payload.SessionId, authCode.Phone)
 		if err != nil {
 			response.InternalServerError(w, response.ErrorMessage{Message: err.Error()})
 			return

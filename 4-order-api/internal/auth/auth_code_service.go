@@ -14,7 +14,7 @@ func NewAuthService() *AuthCodeService {
 	return new(AuthCodeService)
 }
 
-func (service *AuthCodeService) GenerateAuthCode() (AuthCode, error) {
+func (service *AuthCodeService) GenerateAuthCode(phone string) (AuthCode, error) {
 
 	// Генерируем код и сессию
 	code := auth.GenerateAuthCode()
@@ -27,7 +27,7 @@ func (service *AuthCodeService) GenerateAuthCode() (AuthCode, error) {
 	}
 
 	// Добавляем или обновляем код для пользователя
-	authCodes.Upsert(sessionId, code)
+	authCode := authCodes.Upsert(sessionId, code, phone)
 
 	// Сохраняем коды
 	err = file.WriteFile(codesFileName, &authCodes)
@@ -36,23 +36,41 @@ func (service *AuthCodeService) GenerateAuthCode() (AuthCode, error) {
 	}
 
 	// Возвращаем код
-	return AuthCode{Code: code, SessionId: sessionId}, nil
+	return authCode, nil
 }
 
-func (service *AuthCodeService) VerifyAuthCode(sessionId, code string) bool {
-	// Достаем коды
+func (service *AuthCodeService) GetAuthCode(sessionId string) (AuthCode, bool) {
+	// Достаем коды из файла
 	authCodes, err := getCodesFromFile()
 	if err != nil {
-		return false
+		return AuthCode{}, false
 	}
 
-	// Проверяем на соответствие
+	// Ищем по идентификатору сессии
 	authSession, ok := authCodes.GetBySessionId(sessionId)
-	if !ok || authSession.Code != code {
-		return false
+	if !ok {
+		return AuthCode{}, false
 	}
 
-	return true
+	return authSession, true
+}
+
+func (service *AuthCodeService) DeleteAuthCode(sessionId string) error {
+	// Достаем коды из файла
+	authCodes, err := getCodesFromFile()
+	if err != nil {
+		return err
+	}
+
+	authCodes.Delete(sessionId)
+
+	// Сохраняем коды
+	err = file.WriteFile(codesFileName, &authCodes)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func getCodesFromFile() (*AuthCodes, error) {
