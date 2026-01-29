@@ -5,6 +5,7 @@ import "gorm.io/gorm"
 type UserRepository interface {
 	Create(user User) (User, error)
 	GetById(id uint) (User, error)
+	GetByPhone(id uint) (User, error)
 }
 
 type userRepository struct {
@@ -22,5 +23,9 @@ func (userRepository *userRepository) Create(user User) (User, error) {
 }
 
 func (userRepository *userRepository) GetById(id uint) (User, error) {
+	return User{}, nil
+}
+
+func (userRepository *userRepository) GetByPhone(id uint) (User, error) {
 	return User{}, nil
 }

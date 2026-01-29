@@ -1,95 +1,80 @@
 package service
 
 import (
+	"errors"
+	"github.com/ANB98prog/purple-school-homeworks/4-order-api/internal/repository"
 	helper "github.com/ANB98prog/purple-school-homeworks/4-order-api/pkg/helpers/auth"
-	"github.com/ANB98prog/purple-school-homeworks/4-order-api/pkg/helpers/file"
+	"time"
 )
 
-const codesFileName = "authCodes.json"
+const (
+	minTokenLen = 6
+	sessionTtl  = time.Minute * 5
+)
 
 type AuthCodeService interface {
-	GenerateAuthCode(phone string) (AuthCode, error)
+	GenerateAuthCode(userId uint) (AuthCode, error)
 	GetAuthCode(sessionId string) (AuthCode, bool)
-	DeleteAuthCode(sessionId string) error
+	DeleteAuthCode(sessionId string)
 }
 
-type authCodeService struct{}
-
-func NewAuthCodeService() AuthCodeService {
-	return &authCodeService{}
+type authCodeService struct {
+	authCodeRepo repository.AuthCodeRepository
 }
 
-var _ AuthCodeService = (*authCodeService)(nil) // assertion
+func NewAuthCodeService(repo repository.AuthCodeRepository) AuthCodeService {
+	return &authCodeService{authCodeRepo: repo}
+}
 
-func (service *authCodeService) GenerateAuthCode(phone string) (AuthCode, error) {
+var _ AuthCodeService = (*authCodeService)(nil)
 
-	// Генерируем код и сессию
-	code := helper.GenerateAuthCode()
-	sessionId := helper.GenerateSessionId()
-
-	// Читаем из файла коды
-	authCodes, err := getCodesFromFile()
+func (service *authCodeService) GenerateAuthCode(userId uint) (AuthCode, error) {
+	authCode, err := service.generateAuthCode(userId)
 	if err != nil {
 		return AuthCode{}, err
 	}
 
-	// Добавляем или обновляем код для пользователя
-	authCode := authCodes.Upsert(sessionId, code, phone)
-
-	// Сохраняем коды
-	err = file.WriteFile(codesFileName, &authCodes)
-	if err != nil {
-		return AuthCode{}, err
-	}
-
-	// Возвращаем код
 	return authCode, nil
 }
 
-func (service *authCodeService) GetAuthCode(sessionId string) (AuthCode, bool) {
-	// Достаем коды из файла
-	authCodes, err := getCodesFromFile()
-	if err != nil {
-		return AuthCode{}, false
+func (service *authCodeService) generateAuthCode(userId uint) (AuthCode, error) {
+	authCode := repository.AuthCode{
+		UserId: userId,
+		Code:   helper.GenerateAuthCode(),
 	}
 
-	// Ищем по идентификатору сессии
-	authSession, ok := authCodes.GetBySessionId(sessionId)
+	minSessionIdLen := minTokenLen
+	for i := 0; i < 5; i++ {
+		for j := 0; j < 5; j++ {
+			sessionId := helper.GenerateSessionId(minSessionIdLen)
+
+			authCode.SessionId = sessionId
+
+			ok, err := service.authCodeRepo.Save(authCode, sessionTtl)
+			if err != nil {
+				return AuthCode{}, err
+			}
+
+			if ok {
+				return AuthCode{SessionId: authCode.SessionId, Code: authCode.Code, UserId: authCode.UserId}, nil
+			}
+		}
+		// Если за n попыток не удалось сгенерировать уникальную сессию, то увеличиваем размер токена
+		minSessionIdLen++
+	}
+
+	return AuthCode{}, errors.New("cannot create unique session")
+}
+
+func (service *authCodeService) GetAuthCode(sessionId string) (AuthCode, bool) {
+	authCode, ok := service.authCodeRepo.GetBySessionId(sessionId)
 	if !ok {
 		return AuthCode{}, false
 	}
 
-	return authSession, true
+	return AuthCode{SessionId: authCode.SessionId, UserId: authCode.UserId, Code: authCode.Code}, ok
 }
 
-func (service *authCodeService) DeleteAuthCode(sessionId string) error {
-	// Достаем коды из файла
-	authCodes, err := getCodesFromFile()
-	if err != nil {
-		return err
-	}
-
-	authCodes.Delete(sessionId)
-
-	// Сохраняем коды
-	err = file.WriteFile(codesFileName, &authCodes)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func getCodesFromFile() (*AuthCodes, error) {
-	authCodes, err := file.ReadFile[AuthCodes](codesFileName)
-
-	if err != nil {
-		return nil, err
-	}
-
-	if authCodes == nil {
-		return &AuthCodes{}, nil
-	}
-
-	return authCodes, nil
+func (service *authCodeService) DeleteAuthCode(sessionId string) {
+	service.authCodeRepo.Delete(sessionId)
 }

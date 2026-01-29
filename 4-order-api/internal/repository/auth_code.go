@@ -1,4 +1,4 @@
-package service
+package repository
 
 type AuthCode struct {
 	SessionId string

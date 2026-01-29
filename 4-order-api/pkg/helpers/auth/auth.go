@@ -6,8 +6,8 @@ const intCharset = "0123456789"
 const alphaNumericCharset = "abcdefghijklmnopqrstuvwxyzZYXWVUTSRQPONMLKJIHGFEDCBA!@#$%^&*_-=+0123456789"
 
 // GenerateSessionId - генерирует токен сессии
-func GenerateSessionId() string {
-	token := make([]byte, 16)
+func GenerateSessionId(minLen int) string {
+	token := make([]byte, minLen)
 	for i := range token {
 		token[i] = alphaNumericCharset[rand.IntN(len(alphaNumericCharset))]
 	}
