@@ -18,6 +18,7 @@ const (
 
 	CtxUserSessionId CtxAuthorizationKey = "userSessionId"
 	CtxUserPhone     CtxAuthorizationKey = "userPhone"
+	CtxUserId        CtxAuthorizationKey = "userId"
 )
 
 func Authorization(next http.Handler, config *configs.Config) http.Handler {
@@ -37,6 +38,7 @@ func Authorization(next http.Handler, config *configs.Config) http.Handler {
 
 		ctx := context.WithValue(r.Context(), CtxUserSessionId, data.SessionId)
 		ctx = context.WithValue(ctx, CtxUserPhone, data.Phone)
+		ctx = context.WithValue(ctx, CtxUserId, data.UserId)
 		req := r.WithContext(ctx)
 
 		next.ServeHTTP(w, req)

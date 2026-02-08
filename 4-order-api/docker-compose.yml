@@ -10,3 +10,21 @@ services:
       - ./order-api-postgres-data:/data/postgres
     ports:
       - "5433:5432"
+  redis:
+    image: redis:7.2-alpine
+    container_name: redis-orderapi
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - orderapi-network
+
+volumes:
+  redis_data:
+    driver: local
+
+networks:
+  orderapi-network:
+    driver: bridge

@@ -1,4 +1,4 @@
-package auth
+package handler
 
 type AuthCodeRequest struct {
 	Phone string `json:"phone" validate:"required"`

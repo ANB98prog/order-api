@@ -1,6 +1,15 @@
 package jwt
 
-import "github.com/golang-jwt/jwt/v5"
+import (
+	"github.com/golang-jwt/jwt/v5"
+	"strconv"
+)
+
+const (
+	SessionIdKey = "sessionId"
+	UserPhoneKey = "phone"
+	UserIdKey    = "userId"
+)
 
 // JWT - содержит данные для создания JWT токена
 type JWT struct {
@@ -10,6 +19,7 @@ type JWT struct {
 type JWTData struct {
 	SessionId string
 	Phone     string
+	UserId    uint
 }
 
 // NewJWT - создает новый экземпляр JWT
@@ -18,10 +28,11 @@ func NewJWT(secret string) *JWT {
 }
 
 // Create - Создает jwt токен
-func (j *JWT) Create(sessionId, phone string) (string, error) {
+func (j *JWT) Create(sessionId, phone string, userId uint) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"sessionId": sessionId,
-		"phone":     phone,
+		SessionIdKey: sessionId,
+		UserPhoneKey: phone,
+		UserIdKey:    strconv.Itoa(int(userId)),
 	})
 
 	s, err := token.SignedString([]byte(j.secret))
@@ -39,17 +50,27 @@ func (j *JWT) Parse(tokenString string) (*JWTData, bool) {
 	if err != nil {
 		return nil, false
 	}
-	sessionId, ok := GetClaim("sessionId", token)
+	sessionId, ok := GetClaim(SessionIdKey, token)
 	if !ok {
 		return nil, false
 	}
-	phone, ok := GetClaim("phone", token)
+	phone, ok := GetClaim(UserPhoneKey, token)
 	if !ok {
 		return nil, false
 	}
+	userIdStr, ok := GetClaim(UserIdKey, token)
+	if !ok {
+		return nil, false
+	}
+	userId, err := strconv.ParseUint(userIdStr, 10, 32)
+	if err != nil {
+		return nil, false
+	}
+
 	return &JWTData{
 		SessionId: sessionId,
 		Phone:     phone,
+		UserId:    uint(userId),
 	}, token.Valid
 }
 
