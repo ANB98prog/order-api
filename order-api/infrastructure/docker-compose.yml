@@ -1,6 +1,6 @@
 services:
   postgres:
-    container_name: order_api_postgres
+    container_name: order-api-pg
     image: postgres:16.4
     environment:
       POSTGRES_USER: postgres
@@ -8,11 +8,12 @@ services:
       PG_DATA: /data/postgres
     volumes:
       - ./order-api-postgres-data:/data/postgres
+      - ./init.sql:/docker-entrypoint-initdb.d/01-init.sql
     ports:
       - "5433:5432"
   redis:
     image: redis:7.2-alpine
-    container_name: redis-orderapi
+    container_name: order-api-redis
     restart: unless-stopped
     ports:
       - "6379:6379"
