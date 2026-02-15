@@ -1,7 +1,7 @@
 .env
-./4-order-api/order-api-postgres-data
-./4-order-api/.env.Development
+./order-api/order-api-postgres-data
+./order-api/.env.Development
 *.xml
 *.iml
-/4-order-api/logs/orderapi.log
+/order-api/logs/orderapi.log
 /authCodes.json
