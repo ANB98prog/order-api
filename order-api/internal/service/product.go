@@ -1,6 +1,6 @@
 package service
 
-import "github.com/ANB98prog/purple-school-homeworks/order-api/internal/domain/entity"
+import "github.com/ANB98prog/order-api/internal/domain/entity"
 
 type CreateProduct struct {
 	Name        string

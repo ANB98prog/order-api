@@ -1,6 +1,6 @@
 package service
 
-import "github.com/ANB98prog/purple-school-homeworks/order-api/internal/repository"
+import "github.com/ANB98prog/order-api/internal/repository"
 
 type UserService interface {
 	Create(phone string) (*User, error)

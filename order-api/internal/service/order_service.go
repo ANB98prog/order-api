@@ -2,8 +2,8 @@ package service
 
 import (
 	"fmt"
-	"github.com/ANB98prog/purple-school-homeworks/order-api/internal/repository"
-	"github.com/ANB98prog/purple-school-homeworks/order-api/pkg/errors"
+	"github.com/ANB98prog/order-api/internal/repository"
+	"github.com/ANB98prog/order-api/pkg/errors"
 	"time"
 )
 

@@ -1,8 +1,8 @@
 package request
 
 import (
-	"github.com/ANB98prog/purple-school-homeworks/order-api/pkg/json"
-	"github.com/ANB98prog/purple-school-homeworks/order-api/pkg/response"
+	"github.com/ANB98prog/order-api/pkg/json"
+	"github.com/ANB98prog/order-api/pkg/response"
 	"net/http"
 )
 

@@ -2,9 +2,9 @@ package middlewares
 
 import (
 	"context"
-	"github.com/ANB98prog/purple-school-homeworks/order-api/configs"
-	"github.com/ANB98prog/purple-school-homeworks/order-api/pkg/jwt"
-	"github.com/ANB98prog/purple-school-homeworks/order-api/pkg/response"
+	"github.com/ANB98prog/order-api/configs"
+	"github.com/ANB98prog/order-api/pkg/jwt"
+	"github.com/ANB98prog/order-api/pkg/response"
 	"net/http"
 	"strings"
 )

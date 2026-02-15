@@ -1,7 +1,7 @@
 package service
 
 import (
-	"github.com/ANB98prog/purple-school-homeworks/order-api/internal/repository"
+	"github.com/ANB98prog/order-api/internal/repository"
 )
 
 type ProductService interface {

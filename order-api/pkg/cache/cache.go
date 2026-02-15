@@ -2,7 +2,7 @@ package cache
 
 import (
 	"context"
-	"github.com/ANB98prog/purple-school-homeworks/order-api/configs"
+	"github.com/ANB98prog/order-api/configs"
 	"github.com/redis/go-redis/v9"
 )
 

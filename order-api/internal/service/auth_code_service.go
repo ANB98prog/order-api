@@ -2,8 +2,8 @@ package service
 
 import (
 	"errors"
-	"github.com/ANB98prog/purple-school-homeworks/order-api/internal/repository"
-	helper "github.com/ANB98prog/purple-school-homeworks/order-api/pkg/helpers/auth"
+	"github.com/ANB98prog/order-api/internal/repository"
+	helper "github.com/ANB98prog/order-api/pkg/helpers/auth"
 	"time"
 )
 

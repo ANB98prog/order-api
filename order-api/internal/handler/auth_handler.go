@@ -3,11 +3,11 @@ package handler
 import (
 	goerrors "errors"
 	"fmt"
-	"github.com/ANB98prog/purple-school-homeworks/order-api/internal/service"
-	"github.com/ANB98prog/purple-school-homeworks/order-api/pkg/errors"
-	"github.com/ANB98prog/purple-school-homeworks/order-api/pkg/jwt"
-	"github.com/ANB98prog/purple-school-homeworks/order-api/pkg/request"
-	"github.com/ANB98prog/purple-school-homeworks/order-api/pkg/response"
+	"github.com/ANB98prog/order-api/internal/service"
+	"github.com/ANB98prog/order-api/pkg/errors"
+	"github.com/ANB98prog/order-api/pkg/jwt"
+	"github.com/ANB98prog/order-api/pkg/request"
+	"github.com/ANB98prog/order-api/pkg/response"
 	"log"
 	"net/http"
 )

@@ -3,9 +3,9 @@ package repository
 import (
 	goerr "errors"
 	"fmt"
-	"github.com/ANB98prog/purple-school-homeworks/order-api/internal/domain/entity"
-	"github.com/ANB98prog/purple-school-homeworks/order-api/pkg/db"
-	"github.com/ANB98prog/purple-school-homeworks/order-api/pkg/errors"
+	"github.com/ANB98prog/order-api/internal/domain/entity"
+	"github.com/ANB98prog/order-api/pkg/db"
+	"github.com/ANB98prog/order-api/pkg/errors"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )

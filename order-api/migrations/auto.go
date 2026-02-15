@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/ANB98prog/purple-school-homeworks/order-api/configs"
-	"github.com/ANB98prog/purple-school-homeworks/order-api/internal/domain/entity"
-	"github.com/ANB98prog/purple-school-homeworks/order-api/pkg/db"
+	"github.com/ANB98prog/order-api/configs"
+	"github.com/ANB98prog/order-api/internal/domain/entity"
+	"github.com/ANB98prog/order-api/pkg/db"
 )
 
 func main() {

@@ -2,7 +2,7 @@ package file
 
 import (
 	"fmt"
-	"github.com/ANB98prog/purple-school-homeworks/order-api/pkg/json"
+	"github.com/ANB98prog/order-api/pkg/json"
 	"os"
 )
 

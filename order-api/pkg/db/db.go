@@ -1,7 +1,7 @@
 package db
 
 import (
-	"github.com/ANB98prog/purple-school-homeworks/order-api/configs"
+	"github.com/ANB98prog/order-api/configs"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
