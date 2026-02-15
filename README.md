@@ -38,3 +38,5 @@ docker compose -f ./order-api/infrastructure/docker-compose.yml up -d
 ```shell
 goose postgres "host=localhost user=postgres password=my_pass dbname=market port=5433 sslmode=disable" up
 ```
+
+Для упрощения в проекте оставлен .env файл
