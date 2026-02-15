@@ -24,5 +24,6 @@ func NewItemNotFound(message string) *ItemNotFound {
 }
 
 var (
-	ErrUserNotFound = errors.New("user not found")
+	ErrUserNotFound      = errors.New("user not found")
+	ErrItemAlreadyExists = errors.New("item already exists")
 )

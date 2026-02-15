@@ -40,6 +40,7 @@ func main() {
 	authCodeService := service.NewAuthCodeService(authCodeRepo)
 	userService := service.NewUserService(userRepo)
 	orderService := service.NewOrderService(orderRepo, productRepo, userRepo)
+	productService := service.NewProductService(productRepo)
 
 	// JWT
 	j := jwt.NewJWT(conf.Auth.Secret)
@@ -56,6 +57,7 @@ func main() {
 
 	handler.NewAuthHandler(router, authHandlerDeps)
 	handler.NewOrderHandler(router, orderHandlerDeps, conf)
+	handler.NewProductHandler(router, productService, conf)
 
 	stack := middlewares.Chain(middlewares.Logging)
 

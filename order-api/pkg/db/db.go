@@ -12,7 +12,9 @@ type Db struct {
 
 func NewDb(config *configs.DbConfig) *Db {
 	dsn := config.Dsn
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+		TranslateError: true,
+	})
 	if err != nil {
 		panic(err)
 	}

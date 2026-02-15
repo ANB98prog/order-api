@@ -16,6 +16,8 @@ type ProductRepository interface {
 	Delete(id uint) error
 	GetById(id uint) (*entity.Product, error)
 	Get(ids []uint) ([]entity.Product, error)
+	GetAll() ([]entity.Product, error)
+	GetByName(name string) (*entity.Product, error)
 }
 
 type pgProductRepository struct {
@@ -31,6 +33,10 @@ var _ ProductRepository = (*pgProductRepository)(nil)
 func (repo *pgProductRepository) Create(product *entity.Product) error {
 	result := repo.DB.Create(product)
 	if err := result.Error; err != nil {
+		if goerr.Is(result.Error, gorm.ErrDuplicatedKey) {
+			return errors.ErrItemAlreadyExists
+		}
+
 		return err
 	}
 
@@ -78,4 +84,28 @@ func (repo *pgProductRepository) Get(ids []uint) ([]entity.Product, error) {
 	}
 
 	return products, nil
+}
+
+func (repo *pgProductRepository) GetAll() ([]entity.Product, error) {
+	var products []entity.Product
+	query := repo.DB
+	result := query.Find(&products)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return products, nil
+}
+
+func (repo *pgProductRepository) GetByName(name string) (*entity.Product, error) {
+	var product entity.Product
+	result := repo.DB.Take("name = ?", name).Find(&product)
+
+	if result.Error != nil {
+		if goerr.Is(result.Error, gorm.ErrRecordNotFound) {
+			return nil, errors.NewItemNotFound(fmt.Sprintf("product with name %s not found", name))
+		}
+		return nil, result.Error
+	}
+	return &product, nil
 }
