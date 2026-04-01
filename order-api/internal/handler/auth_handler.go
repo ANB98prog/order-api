@@ -19,9 +19,9 @@ type AuthHandler struct {
 }
 
 type AuthHandlerDeps struct {
-	service.UserService
-	service.AuthCodeService
-	*jwt.JWT
+	UserService     service.UserService
+	AuthCodeService service.AuthCodeService
+	JWT             *jwt.JWT
 }
 
 func NewAuthHandler(router *http.ServeMux, deps AuthHandlerDeps) {

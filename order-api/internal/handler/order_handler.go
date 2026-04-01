@@ -2,7 +2,6 @@ package handler
 
 import (
 	goerrors "errors"
-	"github.com/ANB98prog/order-api/configs"
 	"github.com/ANB98prog/order-api/internal/service"
 	"github.com/ANB98prog/order-api/pkg/errors"
 	"github.com/ANB98prog/order-api/pkg/middlewares"
@@ -13,20 +12,22 @@ import (
 )
 
 type OrderHandlerDeps struct {
-	service.OrderService
+	OrderService  service.OrderService
+	Authorization middlewares.Middleware
 }
 
 type OrderHandler struct {
 	orderService service.OrderService
 }
 
-func NewOrderHandler(router *http.ServeMux, deps OrderHandlerDeps, config *configs.Config) {
+func NewOrderHandler(router *http.ServeMux, deps OrderHandlerDeps) {
 	handler := &OrderHandler{orderService: deps.OrderService}
+	auth := deps.Authorization
 
 	// Routing
-	router.Handle("POST /order/create", middlewares.Authorization(handler.createOrder(), config))
-	router.Handle("GET /order/{id}", middlewares.Authorization(handler.getOrderById(), config))
-	router.Handle("GET /my-orders", middlewares.Authorization(handler.getUserOrders(), config))
+	router.Handle("POST /order/create", auth(handler.createOrder()))
+	router.Handle("GET /order/{id}", auth(handler.getOrderById()))
+	router.Handle("GET /my-orders", auth(handler.getUserOrders()))
 }
 
 func (handler *OrderHandler) createOrder() http.HandlerFunc {

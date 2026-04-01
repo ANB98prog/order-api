@@ -2,7 +2,6 @@ package handler
 
 import (
 	goerrors "errors"
-	"github.com/ANB98prog/order-api/configs"
 	"github.com/ANB98prog/order-api/internal/service"
 	"github.com/ANB98prog/order-api/pkg/errors"
 	"github.com/ANB98prog/order-api/pkg/middlewares"
@@ -16,15 +15,21 @@ type ProductHandler struct {
 	productService service.ProductService
 }
 
-func NewProductHandler(router *http.ServeMux, productService service.ProductService, config *configs.Config) {
+type ProductHandlerDeps struct {
+	ProductService service.ProductService
+	Authorization  middlewares.Middleware
+}
+
+func NewProductHandler(router *http.ServeMux, deps ProductHandlerDeps) {
 	handler := &ProductHandler{
-		productService: productService,
+		productService: deps.ProductService,
 	}
+	auth := deps.Authorization
 
 	// Routing
-	router.Handle("GET /products", middlewares.Authorization(handler.getProducts(), config))
-	router.Handle("GET /product/{id}", middlewares.Authorization(handler.getProductById(), config))
-	router.Handle("POST /product", middlewares.Authorization(handler.createProduct(), config))
+	router.Handle("GET /products", auth(handler.getProducts()))
+	router.Handle("GET /product/{id}", auth(handler.getProductById()))
+	router.Handle("POST /product", auth(handler.createProduct()))
 }
 
 func (h *ProductHandler) getProducts() http.HandlerFunc {

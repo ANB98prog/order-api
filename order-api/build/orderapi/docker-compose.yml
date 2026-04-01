@@ -1,0 +1,55 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: order-api
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      APP_NAME: order-api
+      ADDR: "0.0.0.0:8081"
+      POSTGRES_DSN: postgres://orderapi:orderapipass@postgres:5432/order_api?sslmode=disable
+      REDIS_ADDRESS: redis:6379
+      REDIS_PASSWORD: ""
+      REDIS_DB: "0"
+    ports:
+      - "8081:8081"
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:17-alpine
+    container_name: orderapi-postgres
+    environment:
+      POSTGRES_DB: order_api
+      POSTGRES_USER: orderapi
+      POSTGRES_PASSWORD: orderapipass
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U orderapi -d order_api"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:8-alpine
+    container_name: orderapi-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres-data:
+  redis-data:

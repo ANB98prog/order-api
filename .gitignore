@@ -4,3 +4,5 @@
 *.iml
 /order-api/logs/orderapi.log
 /authCodes.json
+/.gocache/*
+/order-api/out/*
