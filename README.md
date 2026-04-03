@@ -36,7 +36,7 @@ docker compose -f ./order-api/infrastructure/docker-compose.yml up -d
 3. Далее необходимо сделать миграции находясь в директории migrations
 
 ```shell
-goose postgres "host=localhost user=postgres password=my_pass dbname=market port=5433 sslmode=disable" up
+goose postgres "host=localhost user=orderapi password=orderapipass dbname=market port=5433 sslmode=disable" up
 ```
 
 Для упрощения в проекте оставлен .env файл

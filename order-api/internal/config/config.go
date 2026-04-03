@@ -43,7 +43,7 @@ func Load() Config {
 	cacheConfig := CacheConfig{
 		Addr:     getEnv("REDIS_ADDR", "localhost:6379"),
 		Password: getEnv("REDIS_PASS", ""),
-		Db:       getEnvAsInt("REDIS_PASS", 0),
+		Db:       getEnvAsInt("REDIS_DB", 0),
 	}
 
 	authConfig := AuthConfig{

@@ -7,7 +7,7 @@ RUN go mod download
 
 COPY . .
 
-RUN go build -o /out/orderapi ./cmd/orderapi
+RUN go build -o /out/orderapi ./order-api/cmd/orderapi
 
 FROM alpine:3.21
 

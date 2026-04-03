@@ -65,7 +65,7 @@ func New(deps Dependencies) *Server {
 		Authorization:  authorization,
 	})
 
-	stack := middlewares.Chain(middlewares.Logging)
+	stack := middlewares.Chain(middlewares.Logging(deps.Logger))
 
 	httpAddr := deps.Config.Addr
 	if httpAddr == "" {

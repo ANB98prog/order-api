@@ -1,7 +1,7 @@
 package middlewares
 
 import (
-	"github.com/sirupsen/logrus"
+	"log/slog"
 	"net/http"
 	"time"
 )
@@ -16,20 +16,22 @@ func (w *responseWriter) WriteHeader(statusCode int) {
 	w.ResponseWriter.WriteHeader(statusCode)
 }
 
-func Logging(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		start := time.Now()
-		rw := &responseWriter{ResponseWriter: w, statusCode: http.StatusOK}
-		defer func() {
-			duration := time.Since(start)
-			logrus.WithFields(logrus.Fields{
-				"method":      r.Method,
-				"path":        r.URL.Path,
-				"remote_ip":   r.RemoteAddr,
-				"status":      rw.statusCode,
-				"duration_ms": duration.Milliseconds(),
-			}).Info("Request processed")
-		}()
-		next.ServeHTTP(rw, r)
-	})
+func Logging(logger *slog.Logger) Middleware {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			start := time.Now()
+			rw := &responseWriter{ResponseWriter: w, statusCode: http.StatusOK}
+			defer func() {
+				duration := time.Since(start)
+				logger.Info("Request processed",
+					slog.String("method", r.Method),
+					slog.String("path", r.URL.Path),
+					slog.String("remote_ip", r.RemoteAddr),
+					slog.Int("status", rw.statusCode),
+					slog.Int64("duration_ms", duration.Milliseconds()),
+				)
+			}()
+			next.ServeHTTP(rw, r)
+		})
+	}
 }
