@@ -7,7 +7,6 @@ import (
 	"github.com/ANB98prog/order-api/internal/config"
 	"github.com/ANB98prog/order-api/internal/server/orderapi"
 	"github.com/ANB98prog/order-api/pkg/db"
-	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/redis/go-redis/v9"
 	"log/slog"
 )
@@ -15,20 +14,15 @@ import (
 type OrderApiApp struct {
 	logger      *slog.Logger
 	cfg         config.Config
-	postgresDb  *pgxpool.Pool
+	postgresDb  *db.Db
 	redisClient *redis.Client
 	server      *orderapi.Server
 }
 
 func New(ctx context.Context, logger *slog.Logger, cfg config.Config) (*OrderApiApp, error) {
-	postgresPool, err := pgxpool.New(ctx, cfg.Db.Dsn)
+	postgresDb, err := db.NewDb(cfg.Db)
 	if err != nil {
-		return nil, fmt.Errorf("create postgres pool: %w", err)
-	}
-
-	if err = postgresPool.Ping(ctx); err != nil {
-		postgresPool.Close()
-		return nil, fmt.Errorf("ping postgres pool: %w", err)
+		return nil, fmt.Errorf("coonect postgres: %w", err)
 	}
 
 	redisClient := redis.NewClient(&redis.Options{
@@ -38,25 +32,22 @@ func New(ctx context.Context, logger *slog.Logger, cfg config.Config) (*OrderApi
 	})
 
 	if err = redisClient.Ping(ctx).Err(); err != nil {
-		postgresPool.Close()
 		_ = redisClient.Close()
 		return nil, fmt.Errorf("ping redis: %w", err)
 	}
-
-	pgdb := db.NewDb(cfg.Db)
 
 	deps := orderapi.Dependencies{
 		Logger:      logger,
 		Config:      cfg,
 		RedisClient: redisClient,
-		DB:          pgdb,
+		DB:          postgresDb,
 	}
 	orderApi := orderapi.New(deps)
 
 	return &OrderApiApp{
 		logger:      logger,
 		cfg:         cfg,
-		postgresDb:  postgresPool,
+		postgresDb:  postgresDb,
 		redisClient: redisClient,
 		server:      orderApi,
 	}, nil
@@ -83,10 +74,6 @@ func (a *OrderApiApp) Shutdown(ctx context.Context) error {
 
 	if a.redisClient != nil {
 		shutdownErr = errors.Join(shutdownErr, a.redisClient.Close())
-	}
-
-	if a.postgresDb != nil {
-		a.postgresDb.Close()
 	}
 
 	return shutdownErr
